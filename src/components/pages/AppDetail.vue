@@ -8,14 +8,16 @@
     <div class="install">安装</div>
   </div>
   <div class="down-content">
-    <div class="down-left">
-      <div class="screen-shot">
-        <div class="image-container">
-          <img src="../../assets/images/3.png" alt="截图1">
-          <img src="../../assets/images/2.png" alt="截图2">
-          <img src="../../assets/images/1.png" alt="截图3">
-        </div>
+    <div class="screen-shot">
+      <div class="image-container">
+        <img src="../../assets/images/3.png" alt="截图1">
+        <img src="../../assets/images/2.png" alt="截图2">
+        <img src="../../assets/images/1.png" alt="截图3">
       </div>
+    </div>
+    <div class="down-right">
+      <Unofficial></Unofficial>
+      <Confirmed class="confirmed"></Confirmed>
       <div class="info">
         <table>
           <tbody>
@@ -44,10 +46,6 @@
           <div class="report-bug">报告使用问题</div>
         </div>
       </div>
-    </div>
-    <div class="down-right">
-      <Unofficial></Unofficial>
-      <Confirmed class="confirmed"></Confirmed>
     </div>
   </div>
 </template>
@@ -101,13 +99,9 @@ import Confirmed from "../share/Confirmed.vue";
   display: flex;
 }
 
-.down-left {
+.screen-shot {
   width: calc(100% - 560px);
   margin: 10px 10px 20px 20px;
-}
-
-.screen-shot {
-  width: 100%;
 }
 
 .image-container {
@@ -128,9 +122,18 @@ import Confirmed from "../share/Confirmed.vue";
   margin-right: 10px;
 }
 
+.down-right {
+  width: 500px;
+  margin: 10px 20px 20px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
 .info {
-  width: calc(100% - 20px);
-  margin-top: 20px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 480px;
   padding: 10px;
   border-radius: 5px;
   background-color: lightgray;
@@ -183,12 +186,6 @@ table {
   line-height: 36px;
   background-color: lightcoral;
   text-align: center;
-}
-
-.down-right {
-  width: 500px;
-  height: 400px;
-  margin: 10px 20px 20px 10px;
 }
 
 .confirmed {
