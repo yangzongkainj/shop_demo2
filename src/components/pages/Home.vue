@@ -1,188 +1,179 @@
 <template>
-    <div class="up-content">
-      <div class="poster">
-        <div class="poster-title-up">四季流光，尽收眼底</div>
-        <div class="poster-title-down">安同2024年历壁纸</div>
-      </div>
-      <div class="update">
-        <div class="update-title">一切如常！</div>
-        <div class="update-status">系统各组件已更新</div>
-        <div class="update-greet">干得漂亮<br>祝您使用愉快</div>
-        <div class="update-button">查找更新</div>
+  <!-- 上部组件 -->
+  <div class="up-content">
+    <Welcome class="welcome"></Welcome>
+    <!-- 没有需要升级的软件 -->
+    <div v-if="update == 0 && updateSecurity == 0">
+      <UpdateGreen class="update"></UpdateGreen>
+    </div>
+    <!-- 存在需要升级的软件，但没有安全更新 -->
+    <div v-else-if="update > 0 && updateSecurity == 0">
+      <UpdateYellow 
+        class="update"
+        :update="update"
+      ></UpdateYellow>
+    </div>
+    <!-- 存在安全更新 -->
+    <div v-else>
+      <UpdateRed 
+        class="update"
+        :update="update"
+        :updateSecurity="updateSecurity"
+      ></UpdateRed>
+    </div>
+  </div>
+  <!-- 下部组件 -->
+  <div class="down-content">
+    <div class="app-content">
+      <div class="app-title">{{ $t("home.appTitle") }}</div>
+      <div class="apps">
+        <AppCard
+          v-for="(app, index) in recommandList"
+          :key="index"
+          :name="app.name"
+          :intro="app.intro"
+          @click="showDetail"
+        ></AppCard>
       </div>
     </div>
-    <div class="down-content">
-        <div class="app-content">
-            <div class="app-title">装机必备</div>
-            <div class="apps">
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-                <AppIntro @click="showDetail"></AppIntro>
-            </div>
-        </div>
-      <div class="tip-content">
-        <div class="tip-title">技巧指南</div>
-        <div class="tips">
-          <TipIntro class="tip-intro"></TipIntro>
-          <TipIntro class="tip-intro"></TipIntro>
-          <TipIntro class="tip-intro"></TipIntro>
-          <TipIntro class="tip-intro"></TipIntro>
-          <TipIntro class="tip-intro"></TipIntro>
-        </div>
-        <div class="tip-button">更多技巧</div>
+    <div class="tip-content">
+      <div class="tip-title">{{ $t("home.tipTitle") }}</div>
+      <div class="tips">
+        <TipCard
+          v-for="(tip, index) in tipList"
+          :key="index"
+          :month="tip.month"
+          :day="tip.day"
+          :title="tip.title"
+          :intro="tip.intro"
+        ></TipCard>
       </div>
     </div>
+  </div>
 </template>
 
-<script setup>
-import AppIntro from '../share/AppIntro.vue';
-import TipIntro from "../share/TipIntro.vue";
-import { useRouter } from 'vue-router';
+<script setup lang='ts'>
+import { ref, onBeforeMount } from 'vue';
+import { invoke } from '@tauri-apps/api/core';
 
-const router = useRouter()
+import Welcome from '../share/Welcome.vue';
+import UpdateGreen from '../share/UpdateGreen.vue';
+import UpdateYellow from '../share/UpdateYellow.vue';
+import UpdateRed from '../share/UpdateRed.vue';
+import AppCard from '../share/AppCard.vue';
+import TipCard from '../share/TipCard.vue';
+import router from '../../router';
+
+// 总升级与安全升级数
+let update = ref(10)
+let updateSecurity = ref(0)
+
+// 技巧指南列表
+const tipList = [
+  {
+    month: "四月",
+    day: 23,
+    title: "龙架构如何运行 x86 程序？",
+    intro: "LATX 安装及使用指南"
+  },
+  {
+    month: "三月",
+    day: 17,
+    title: "开机时间为何漫长？",
+    intro: "手把手教您分析和调整系统服务配置"
+  },
+  {
+    month: "二月",
+    day: 22,
+    title: "Windows 时间错乱？",
+    intro: "调整时间配置，轻松同步双系统配置"
+  },
+  {
+    month: "二月",
+    day: 7,
+    title: "应用无法安装？",
+    intro: "安同维护者来帮您！"
+  },
+]
+
+// 定义AppInfo类型
+interface AppInfo {
+  name: string,
+  intro: string
+}
+
+// 获取推荐列表
+const recommandList = ref<AppInfo[]>([])
+const fetchRecommandList = async () => {
+  try {
+    const result = await invoke<AppInfo[]>('fetch_recommand');
+    recommandList.value = result;
+  } catch (error) {
+    console.error('Error fetching list:', error);
+  }
+}
 
 // 跳转到应用详情
-function showDetail() {
-    router.push("/detail");
+const showDetail = () => {
+  router.push("/app")
 }
+
+// 组件挂载时自动执行
+onBeforeMount(() => {
+  fetchRecommandList()
+})
 </script>
 
 <style scoped>
-* {
-    margin: 0;
-    padding: 0;
-}
-
 .up-content {
-    display:flex;
-    margin-top: 40px;
+  display:flex;
+  margin-top: 40px;
 }
 
-.poster {
-    flex-grow: 1;
-    height: 200px;
-    margin: 20px 10px 10px 20px;
-    border-radius: 5px;
-    background-color: rgb(0, 32, 74);
+.welcome {
+  flex-grow: 1;
+  height: 200px;
+  margin: 20px;
 }
 
 .update {
-    width: 310px;
-    height: 160px;
-    margin: 20px 20px 10px 10px;
-    padding: 20px;
-    border-radius: 5px;
-    background-color: rgb(206, 255, 214);
-}
-
-.poster-title-up {
-  padding: 70px 0 0 30px;
-  font-size: 30px;
-  color: white;
-}
-
-.poster-title-down {
-  padding-left: 30px;
-  font-size: 38px;
-  color: white;
-}
-
-.update-title {
-  font-size: 30px;
-}
-
-.update-status {
-  margin-top: 8px;
-}
-
-.update-greet {
-  margin-top: 8px;
-  line-height: 1.1;
-}
-
-.update-button {
-  width: 130px;
-  height: 36px;
-  line-height: 36px;
-  text-align: center;
-  margin-top: 3px;
-  border: 1px solid black;
-  border-radius: 5px;
-  font-size: 20px;
-  font-weight: bold;
-  float: right;
-}
-
-.update-button:hover {
-  background-color: lightgray;
+  width: 300px;
+  height: 200px;
+  margin: 20px 20px 20px 0;
 }
 
 .down-content {
-    display: flex;
+  display: flex;
 }
 
 .app-content {
-    width: calc(100% - 400px);
-    height: 400px;
-    /* 本组件margin值为AppIntro的进行了预留 */
-    margin: 10px 10px 15px 15px;
+  flex-grow: 1;
+  margin: 0 20px 20px 20px;
 }
 
 .app-title {
-    font-size: 24px;
-    line-height: 30px;
-    margin-left: 5px;
+  font-size: 26px;
+  margin: 0 0 5px 5px;
+  font-weight: 500;
 }
 
 .apps {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    align-content: flex-start;
-}
-
-.apps div {
-    margin: 5px;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-content: flex-start;
 }
 
 .tip-content {
-  width: 350px;
-  height: 485px;
-  margin: 10px 20px 20px 10px;
-  border-radius: 5px;
+  width: 300px;
+  height: 300px;
+  margin: 0 20px 20px 0;
+  flex-shrink: 0;
 }
 
 .tip-title {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.tip-button {
-  width: 130px;
-  height: 36px;
-  line-height: 36px;
-  text-align: center;
-  margin-right: 20px;
-  border: 1px solid black;
-  border-radius: 5px;
-  font-size: 20px;
-  font-weight: bold;
-  float: right;
-}
-
-.tip-button:hover {
-  background-color: lightgray;
+  font-size: 26px;
+  margin: 0 0 5px 5px;
+  font-weight: 500;
 }
 </style>

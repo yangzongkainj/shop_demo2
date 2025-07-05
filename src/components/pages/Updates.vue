@@ -1,45 +1,62 @@
 <template>
-  <div class="downloading">
-    <div class="subtitle">当前正在下载</div>
-  </div>
-  <div class="managing">
-    <div class="subtitle">管理本地程序</div>
-  </div>
-  <div class="update">
-    <div class="subtitle">有x项更新可用</div>
+  <div>
+    <div class="up-content">
+      <div class="update-center">
+        <div class="title">{{ $t("updates.title") }}</div>
+        <div class="intro">{{ $t("updates.intro") }}</div>
+        <div class="status">{{ updateSystem }}{{ $t("updates.status1") }}{{ updateApp }}{{ $t("updates.status2") }}</div>
+      </div>
+      <div class="download"></div>
+    </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup lang='ts'>
+import { ref } from 'vue';
+
+// 系统升级与应用升级数
+let updateSystem = ref(10)
+let updateApp = ref(0)
+</script>
 
 <style scoped>
-.downloading {
-  width: calc(100% - 40px);
-  height: 72px;
-  margin: 60px 20px 0 20px;
-  border-radius: 5px;
-  background-color: lightgray;
+.up-content {
+  display: flex;
+  margin-top: 40px;
 }
 
-.subtitle {
-  font-size: 28px;
-  line-height: 72px;
-  margin-left: 20px;
+.update-center {
+  flex-grow: 1;
+  height: 200px;
+  margin: 20px;
+  border-radius: 5px;
+  background-color: rgb(231, 231, 231);
 }
 
-.managing {
-  width: calc(100% - 40px);
-  height: 72px;
-  margin: 20px 20px 0 20px;
-  border-radius: 5px;
-  background-color: lightgray;
+.title {
+  margin-top: 30px;
+  margin-left: 50px;
+  font-size: 36px;
+  font-weight: 700;
 }
 
-.update {
-  width: calc(100% - 40px);
-  height: 72px;
-  margin: 20px 20px 0 20px;
+.intro {
+  margin-top: 5px;
+  margin-left: 50px;
+  font-size: 20px;
+}
+
+.status {
+  margin-top: 5px;
+  margin-left: 50px;
+  font-size: 20px;
+}
+
+.download {
+  width: 300px;
+  height: 200px;
+  margin: 20px 20px 20px 0;
   border-radius: 5px;
-  background-color: lightgray;
+  background-color: rgb(206, 233, 255);
 }
 </style>
