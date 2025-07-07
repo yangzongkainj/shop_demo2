@@ -8,6 +8,9 @@
         "observing": "浏览",
         "updates": "安装与更新"
     },
+    "pages": {
+        "install": "安装"
+    },
     "home": {
         "appTitle": "装机必备",
         "tipTitle": "技巧指南"

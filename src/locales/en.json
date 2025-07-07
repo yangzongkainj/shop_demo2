@@ -8,6 +8,9 @@
         "observing": "Observing",
         "updates": "Updates"
     },
+    "pages": {
+        "install": "Install"
+    },
     "home": {
         "appTitle": "Popular Apps",
         "tipTitle": "Tips"
